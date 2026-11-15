@@ -1303,16 +1303,18 @@
     const page = body.dataset.page;
     const isProtected = body.hasAttribute('data-protected');
     const me = Store.me();
-    // Redirect visitors to login when opening a protected page
-    if (isProtected && !me) {
-      location.replace('login.html?next=index.html');
-      return;
-    }
-    // IMPORTANT: Redirect logged-out visitors to login.
-    if (isProtected && !me) {
-      location.replace('login.html');
-      return;
-    }
+    // Redirect logged-out visitors to login.
+if (isProtected && !me) {
+  const nextPage = page === 'feed'
+    ? 'index.html'
+    : `${page}.html`;
+
+  location.replace(
+    `login.html?next=${encodeURIComponent(nextPage)}`
+  );
+
+  return;
+}
 
     // Render navigation for logged-in users.
     if (isProtected && me) {
