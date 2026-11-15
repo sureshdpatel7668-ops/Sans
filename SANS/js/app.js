@@ -636,7 +636,7 @@
         (
           opts.href
             ? ` <a href="${Utils.esc(opts.href)}">` +
-              `${Utils.esc(opts.linkText || 'View')}</a>`
+            `${Utils.esc(opts.linkText || 'View')}</a>`
             : ''
         ) +
         `</span>`;
@@ -671,10 +671,9 @@
           aria-modal="true"
           aria-label="${Utils.esc(title)}">
 
-          ${
-            bare
-              ? ''
-              : `
+          ${bare
+          ? ''
+          : `
                 <div class="modal__head">
                   <h3>${Utils.esc(title)}</h3>
                   <button class="icon-btn" data-close aria-label="Close">
@@ -682,17 +681,16 @@
                   </button>
                 </div>
               `
-          }
+        }
 
           <div class="modal__body" ${bare ? 'style="padding:0"' : ''}>
             ${html}
           </div>
 
-          ${
-            foot
-              ? `<div class="modal__foot">${foot}</div>`
-              : ''
-          }
+          ${foot
+          ? `<div class="modal__foot">${foot}</div>`
+          : ''
+        }
         </div>
       `;
 
@@ -778,11 +776,10 @@
           html: `
             <div style="padding:22px">
               <div class="confirm-icon"
-                ${
-                  danger
-                    ? ''
-                    : 'style="background:var(--accent-soft);color:var(--accent)"'
-                }>
+                ${danger
+              ? ''
+              : 'style="background:var(--accent-soft);color:var(--accent)"'
+            }>
                 <i class="fa-solid ${icon}"></i>
               </div>
 
@@ -799,8 +796,7 @@
               Cancel
             </button>
 
-            <button class="btn ${
-              danger ? 'btn--danger' : 'btn--primary'
+            <button class="btn ${danger ? 'btn--danger' : 'btn--primary'
             }" data-yes>
               ${Utils.esc(confirmText)}
             </button>
@@ -942,10 +938,10 @@
         <img
           class="avatar ${cls}"
           src="${Utils.esc(
-            u
-              ? u.avatar
-              : 'assets/images/avatars/av7.svg'
-          )}"
+        u
+          ? u.avatar
+          : 'assets/images/avatars/av7.svg'
+      )}"
           alt=""
           loading="lazy"
         >
@@ -969,9 +965,8 @@
 
       return `
         <button
-          class="btn ${cls} ${
-            on ? 'btn--ghost' : 'btn--primary'
-          }"
+          class="btn ${cls} ${on ? 'btn--ghost' : 'btn--primary'
+        }"
           data-follow="${u.id}"
           aria-pressed="${on}"
         >
@@ -1308,7 +1303,11 @@
     const page = body.dataset.page;
     const isProtected = body.hasAttribute('data-protected');
     const me = Store.me();
-
+    // Redirect visitors to login when opening a protected page
+    if (isProtected && !me) {
+      location.replace('login.html?next=index.html');
+      return;
+    }
     // IMPORTANT: Redirect logged-out visitors to login.
     if (isProtected && !me) {
       location.replace('login.html');
