@@ -3,6 +3,7 @@ require("dotenv").config();
 
 const express = require("express");
 const connectDB = require("./config/db");
+const path = require("path");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -20,39 +21,73 @@ app.use(express.urlencoded({
     limit: "6mb"
 }));
 
-// API Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/posts", postRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/messages", messageRoutes);
-app.use("/api/notifications", notificationRoutes);
+// MongoDB connection
+let dbConnectionPromise;
+
+async function ensureDBConnection(req, res, next) {
+    try {
+        if (!dbConnectionPromise) {
+            dbConnectionPromise = connectDB();
+        }
+
+        await dbConnectionPromise;
+        next();
+
+    } catch (error) {
+        dbConnectionPromise = null;
+
+        console.error("MongoDB connection failed:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Database connection failed"
+        });
+    }
+}
 
 // API Status
 app.get("/api/status", (req, res) => {
-    res.json({
+    res.status(200).json({
         success: true,
         message: "SANS API is running"
     });
 });
 
-// Frontend files
+// API Routes
+app.use("/api/auth", ensureDBConnection, authRoutes);
+app.use("/api/posts", ensureDBConnection, postRoutes);
+app.use("/api/user", ensureDBConnection, userRoutes);
+app.use("/api/messages", ensureDBConnection, messageRoutes);
+app.use("/api/notifications", ensureDBConnection, notificationRoutes);
+
+// Frontend static files
 app.use(express.static(__dirname));
 
-// Start Server
-const startServer = async () => {
-    try {
-        await connectDB();
+// Homepage
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "index.html"));
+});
 
-        app.listen(process.env.PORT || 5000, () => {
-            console.log(
-                `SANS Server running on port ${process.env.PORT || 5000}`
-            );
+// 404 handler
+app.use((req, res) => {
+    res.status(404).send("Page not found");
+});
+
+// Export app for Vercel
+module.exports = app;
+
+// Start local server
+if (require.main === module) {
+    const PORT = process.env.PORT || 5000;
+
+    connectDB()
+        .then(() => {
+            app.listen(PORT, () => {
+                console.log(`SANS Server running on port ${PORT}`);
+            });
+        })
+        .catch((error) => {
+            console.error("Server startup failed:", error.message);
+            process.exit(1);
         });
-
-    } catch (error) {
-        console.error("Server startup failed:", error.message);
-        process.exit(1);
-    }
-};
-
-startServer();
+}
