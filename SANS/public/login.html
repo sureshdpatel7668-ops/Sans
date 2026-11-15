@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Log in • SANS</title>
+<meta name="description" content="SANS: Your people. Your space. Your world.">
+<meta name="theme-color" content="#0e0f11">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('sans_theme')||'dark'}catch(e){}</script>
+</head>
+<body class="is-loading" data-page="login">
+<div class="auth">
+  <section class="auth__brand">
+    <a class="brand brand--lg" href="login.html" aria-label="SANS"><img src="assets/logo.svg" alt=""><span>SANS</span></a>
+    <h2 class="auth__tag"><span>Your people.</span><span>Your space.</span>Your world.</h2>
+    <div class="auth__collage" aria-hidden="true">
+      <img src="assets/images/posts/p1.svg" alt=""><img src="assets/images/posts/p4.svg" alt=""><img src="assets/images/posts/p5.svg" alt="">
+      <img src="assets/images/posts/p3.svg" alt=""><img src="assets/images/posts/p8.svg" alt=""><img src="assets/images/posts/p11.svg" alt="">
+    </div>
+  </section>
+  <section class="auth__panel">
+    <div class="auth__card">
+      <a class="brand auth__mobile-brand" href="login.html" aria-label="SANS"><img src="assets/logo.svg" alt=""><span>SANS</span></a>
+      <h1>Welcome back</h1>
+      <p>Log in to see what your people are up to.</p>
+      <div class="form-error hidden" id="formError" role="alert"></div>
+      <form id="loginForm" novalidate>
+        <div class="field"><label for="username">Username</label><input class="input" id="username" name="username" autocomplete="username" autocapitalize="none" placeholder="yourname"></div>
+        <div class="field"><label for="password">Password</label>
+          <div class="input-wrap"><input class="input" id="password" name="password" type="password" autocomplete="current-password" placeholder="Your password">
+          <button type="button" class="icon-btn" data-toggle-pw aria-label="Show password"><i class="fa-solid fa-eye"></i></button></div></div>
+        <div class="row-between"><label class="check"><input type="checkbox" name="remember" checked> Keep me logged in</label></div>
+        <button class="btn btn--primary btn--block" type="submit" style="height:46px">Log in</button>
+      </form>
+      <div class="divider">or</div>
+      <button class="btn btn--ghost btn--block" id="demoLogin" type="button" style="height:46px"><i class="fa-solid fa-wand-magic-sparkles"></i> Try the demo account</button>
+      <p class="auth__alt">New to SANS? <a href="signup.html">Create an account</a></p>
+    </div>
+  </section>
+</div>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

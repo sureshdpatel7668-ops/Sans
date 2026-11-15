@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Explore • SANS</title>
+<meta name="description" content="SANS: Your people. Your space. Your world.">
+<meta name="theme-color" content="#0e0f11">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<link rel="apple-touch-icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('sans_theme')||'dark'}catch(e){}</script>
+</head>
+<body class="is-loading" data-page="explore" data-protected>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar" aria-label="Sidebar"></aside>
+  <div>
+    <header class="topbar" id="topbar"></header>
+    <main class="main main--wide" id="main">
+      <div class="col">
+        <form class="explore-search" id="exploreForm" role="search">
+          <div class="search"><i class="fa-solid fa-magnifying-glass"></i>
+            <input class="input" id="q" type="search" placeholder="Search people, posts and #topics" aria-label="Search" autocomplete="off">
+            <button type="button" class="icon-btn hidden" id="clearQ" aria-label="Clear search" style="position:absolute;right:4px;top:50%;transform:translateY(-50%)"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </form>
+        <div id="exploreRoot"></div>
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav"></nav>
+</div>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/navigation.js"></script>
+<script src="js/posts.js"></script>
+<script src="js/explore.js"></script>
+</body>
+</html>

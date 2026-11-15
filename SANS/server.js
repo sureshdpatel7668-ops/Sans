@@ -13,6 +13,8 @@ const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express();
 
+const PUBLIC_DIR = path.join(__dirname, "public");
+
 // Middleware
 app.use(express.json({ limit: "6mb" }));
 
@@ -47,7 +49,7 @@ async function ensureDBConnection(req, res, next) {
 
 // API Status
 app.get("/api/status", (req, res) => {
-    res.status(200).json({
+    res.json({
         success: true,
         message: "SANS API is running"
     });
@@ -61,11 +63,20 @@ app.use("/api/messages", ensureDBConnection, messageRoutes);
 app.use("/api/notifications", ensureDBConnection, notificationRoutes);
 
 // Frontend static files
-app.use(express.static(__dirname));
+app.use(express.static(PUBLIC_DIR));
 
 // Homepage
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
+    res.sendFile(path.join(PUBLIC_DIR, "index.html"));
+});
+
+// Other HTML pages
+app.get("/:page.html", (req, res, next) => {
+    const pagePath = path.join(PUBLIC_DIR, `${req.params.page}.html`);
+
+    res.sendFile(pagePath, (error) => {
+        if (error) next();
+    });
 });
 
 // 404 handler
@@ -73,10 +84,10 @@ app.use((req, res) => {
     res.status(404).send("Page not found");
 });
 
-// Export app for Vercel
+// Export for Vercel
 module.exports = app;
 
-// Start local server
+// Local server
 if (require.main === module) {
     const PORT = process.env.PORT || 5000;
 
