@@ -261,7 +261,6 @@
         typeof id === 'string' &&
         /^[a-f\d]{24}$/i.test(id);
 
-      // Ensure database collections exist.
       this.db.users = Array.isArray(this.db.users)
         ? this.db.users
         : [];
@@ -278,14 +277,12 @@
         ? this.db.conversations
         : [];
 
-      // Remove local demo users.
       this.db.users = this.db.users.filter(
         user =>
           user &&
           isMongoId(String(user.id || ''))
       );
 
-      // Remove local demo posts.
       this.db.posts = this.db.posts.filter(
         post =>
           post &&
@@ -293,7 +290,6 @@
           isMongoId(String(post.userId || ''))
       );
 
-      // Remove local demo notifications.
       this.db.notifications = this.db.notifications.filter(
         notification =>
           notification &&
@@ -302,20 +298,15 @@
           isMongoId(String(notification.from || ''))
       );
 
-      // Remove local demo conversations.
       this.db.conversations = this.db.conversations.filter(
         conversation =>
           conversation &&
           isMongoId(String(conversation.id || ''))
       );
 
-      // Stories are not connected to MongoDB yet.
       this.db.stories = [];
-
-      // Disable pending simulated events.
       this.db.queue = [];
 
-      // Keep only valid MongoDB user IDs in following lists.
       this.db.users.forEach(user => {
         user.following = Array.isArray(user.following)
           ? user.following.filter(isMongoId)
@@ -348,8 +339,6 @@
       this.load();
     },
 
-    /* --- session --- */
-
     sessionId() {
       try {
         return (
@@ -380,7 +369,7 @@
         sessionStorage.removeItem(SESSION_KEY);
         localStorage.removeItem(SESSION_KEY);
       } catch (e) {
-        // Ignore storage errors.
+        // Ignore session storage errors.
       }
     },
 
@@ -388,8 +377,6 @@
       const id = this.sessionId();
       return id ? this.user(id) : null;
     },
-
-    /* --- lookups --- */
 
     get users() {
       return this.db.users;
@@ -445,7 +432,6 @@
         c => String(c.id) === String(id)
       ),
 
-    /** Feed = posts from people I follow + my own. */
     feedFor(uid) {
       const me = this.user(uid);
 
@@ -504,8 +490,6 @@
         .map(x => x.u);
     },
 
-    /* --- mutations --- */
-
     toggleFollow(meId, targetId) {
       const me = this.user(meId);
       const target = this.user(targetId);
@@ -540,12 +524,10 @@
     },
 
     notify() {
-      // Notifications are handled by MongoDB API.
       return false;
     },
 
     schedule() {
-      // Simulated activity has been disabled.
       return false;
     },
 
@@ -667,12 +649,10 @@
 
       setTimeout(() => {
         el.classList.add('is-leaving');
-
         setTimeout(() => el.remove(), 240);
       }, opts.duration || 3400);
     },
 
-    /** Open a modal. Returns { el, body, close }. */
     modal({
       title = '',
       html = '',
@@ -780,7 +760,6 @@
       return api;
     },
 
-    /** Promise-based confirmation dialog. */
     confirm({
       title = 'Are you sure?',
       message = '',
@@ -848,7 +827,6 @@
       });
     },
 
-    /** Floating dropdown menu. */
     dropdown(anchor, items) {
       UI.closeDropdown();
 
@@ -859,8 +837,6 @@
 
       d.innerHTML = items.map((it, i) => {
         if (it === 'hr') return '<hr>';
-
-        const tag = it.href ? 'a' : 'button';
 
         const start = it.href
           ? `<a role="menuitem" href="${Utils.esc(it.href)}"`
@@ -981,7 +957,6 @@
         ? '<i class="fa-solid fa-circle-check verified" title="Verified"></i>'
         : '',
 
-    /** Follow / Following button. */
     followBtn(u, cls = 'btn--sm') {
       const me = Store.me();
 
@@ -1031,7 +1006,6 @@
       `;
     },
 
-    /** Compact Suggested for you list. */
     suggestedHtml(limit = 4) {
       const me = Store.me();
 
@@ -1058,7 +1032,6 @@
 
   const Engine = {
     tick() {
-      // No simulated activity.
       return;
     },
 
@@ -1067,7 +1040,6 @@
     },
 
     run() {
-      // No fake likes, comments, follow-backs or replies.
       return;
     }
   };
@@ -1138,7 +1110,6 @@
      Global delegated handlers
      ====================================================================== */
 
-  // Broken images → sensible fallbacks.
   document.addEventListener('error', (e) => {
     const t = e.target;
 
@@ -1198,7 +1169,6 @@
       return;
     }
 
-    // MongoDB ObjectId validation.
     if (!/^[a-f\d]{24}$/i.test(uid)) {
       UI.toast(
         'This account is not available in MongoDB yet.',
@@ -1231,7 +1201,6 @@
         );
       }
 
-      // Update logged-in user's local following list.
       if (!Array.isArray(me.following)) {
         me.following = [];
       }
@@ -1250,7 +1219,6 @@
 
       Utils.emit('follow');
 
-      // Update all Follow buttons for this user.
       Utils.qsa(`[data-follow="${uid}"]`).forEach(x => {
         const match = x.className.match(/btn--(sm|lg)/);
         const cls = match ? `btn--${match[1]}` : '';
@@ -1341,14 +1309,21 @@
     const isProtected = body.hasAttribute('data-protected');
     const me = Store.me();
 
-    // Protected pages need a valid local session.
+    // IMPORTANT: Redirect logged-out visitors to login.
+    if (isProtected && !me) {
+      location.replace('login.html');
+      return;
+    }
+
+    // Render navigation for logged-in users.
     if (isProtected && me) {
       SANS.Nav && SANS.Nav.render();
     }
 
     // Auth pages bounce signed-in users.
     if (!isProtected && me && !Utils.param('force')) {
-      return location.replace('index.html');
+      location.replace('index.html');
+      return;
     }
 
     // Simulated Engine activity is disabled.
