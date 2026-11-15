@@ -261,7 +261,6 @@
         typeof id === 'string' &&
         /^[a-f\d]{24}$/i.test(id);
 
-      // Ensure database collections exist.
       this.db.users = Array.isArray(this.db.users)
         ? this.db.users
         : [];
@@ -278,14 +277,12 @@
         ? this.db.conversations
         : [];
 
-      // Remove local demo users.
       this.db.users = this.db.users.filter(
         user =>
           user &&
           isMongoId(String(user.id || ''))
       );
 
-      // Remove local demo posts.
       this.db.posts = this.db.posts.filter(
         post =>
           post &&
@@ -293,7 +290,6 @@
           isMongoId(String(post.userId || ''))
       );
 
-      // Remove local demo notifications.
       this.db.notifications = this.db.notifications.filter(
         notification =>
           notification &&
@@ -302,20 +298,15 @@
           isMongoId(String(notification.from || ''))
       );
 
-      // Remove local demo conversations.
       this.db.conversations = this.db.conversations.filter(
         conversation =>
           conversation &&
           isMongoId(String(conversation.id || ''))
       );
 
-      // Stories are not connected to MongoDB yet.
       this.db.stories = [];
-
-      // Disable pending simulated events.
       this.db.queue = [];
 
-      // Keep only valid MongoDB user IDs in following lists.
       this.db.users.forEach(user => {
         user.following = Array.isArray(user.following)
           ? user.following.filter(isMongoId)
@@ -348,8 +339,6 @@
       this.load();
     },
 
-    /* --- session --- */
-
     sessionId() {
       try {
         return (
@@ -380,7 +369,7 @@
         sessionStorage.removeItem(SESSION_KEY);
         localStorage.removeItem(SESSION_KEY);
       } catch (e) {
-        // Ignore storage errors.
+        // Ignore session storage errors.
       }
     },
 
@@ -388,8 +377,6 @@
       const id = this.sessionId();
       return id ? this.user(id) : null;
     },
-
-    /* --- lookups --- */
 
     get users() {
       return this.db.users;
@@ -445,7 +432,6 @@
         c => String(c.id) === String(id)
       ),
 
-    /** Feed = posts from people I follow + my own. */
     feedFor(uid) {
       const me = this.user(uid);
 
@@ -504,8 +490,6 @@
         .map(x => x.u);
     },
 
-    /* --- mutations --- */
-
     toggleFollow(meId, targetId) {
       const me = this.user(meId);
       const target = this.user(targetId);
@@ -540,12 +524,10 @@
     },
 
     notify() {
-      // Notifications are handled by MongoDB API.
       return false;
     },
 
     schedule() {
-      // Simulated activity has been disabled.
       return false;
     },
 
@@ -654,7 +636,7 @@
         (
           opts.href
             ? ` <a href="${Utils.esc(opts.href)}">` +
-              `${Utils.esc(opts.linkText || 'View')}</a>`
+            `${Utils.esc(opts.linkText || 'View')}</a>`
             : ''
         ) +
         `</span>`;
@@ -667,12 +649,10 @@
 
       setTimeout(() => {
         el.classList.add('is-leaving');
-
         setTimeout(() => el.remove(), 240);
       }, opts.duration || 3400);
     },
 
-    /** Open a modal. Returns { el, body, close }. */
     modal({
       title = '',
       html = '',
@@ -691,10 +671,9 @@
           aria-modal="true"
           aria-label="${Utils.esc(title)}">
 
-          ${
-            bare
-              ? ''
-              : `
+          ${bare
+          ? ''
+          : `
                 <div class="modal__head">
                   <h3>${Utils.esc(title)}</h3>
                   <button class="icon-btn" data-close aria-label="Close">
@@ -702,17 +681,16 @@
                   </button>
                 </div>
               `
-          }
+        }
 
           <div class="modal__body" ${bare ? 'style="padding:0"' : ''}>
             ${html}
           </div>
 
-          ${
-            foot
-              ? `<div class="modal__foot">${foot}</div>`
-              : ''
-          }
+          ${foot
+          ? `<div class="modal__foot">${foot}</div>`
+          : ''
+        }
         </div>
       `;
 
@@ -780,7 +758,6 @@
       return api;
     },
 
-    /** Promise-based confirmation dialog. */
     confirm({
       title = 'Are you sure?',
       message = '',
@@ -799,11 +776,10 @@
           html: `
             <div style="padding:22px">
               <div class="confirm-icon"
-                ${
-                  danger
-                    ? ''
-                    : 'style="background:var(--accent-soft);color:var(--accent)"'
-                }>
+                ${danger
+              ? ''
+              : 'style="background:var(--accent-soft);color:var(--accent)"'
+            }>
                 <i class="fa-solid ${icon}"></i>
               </div>
 
@@ -820,8 +796,7 @@
               Cancel
             </button>
 
-            <button class="btn ${
-              danger ? 'btn--danger' : 'btn--primary'
+            <button class="btn ${danger ? 'btn--danger' : 'btn--primary'
             }" data-yes>
               ${Utils.esc(confirmText)}
             </button>
@@ -848,7 +823,6 @@
       });
     },
 
-    /** Floating dropdown menu. */
     dropdown(anchor, items) {
       UI.closeDropdown();
 
@@ -859,8 +833,6 @@
 
       d.innerHTML = items.map((it, i) => {
         if (it === 'hr') return '<hr>';
-
-        const tag = it.href ? 'a' : 'button';
 
         const start = it.href
           ? `<a role="menuitem" href="${Utils.esc(it.href)}"`
@@ -966,10 +938,10 @@
         <img
           class="avatar ${cls}"
           src="${Utils.esc(
-            u
-              ? u.avatar
-              : 'assets/images/avatars/av7.svg'
-          )}"
+        u
+          ? u.avatar
+          : 'assets/images/avatars/av7.svg'
+      )}"
           alt=""
           loading="lazy"
         >
@@ -981,7 +953,6 @@
         ? '<i class="fa-solid fa-circle-check verified" title="Verified"></i>'
         : '',
 
-    /** Follow / Following button. */
     followBtn(u, cls = 'btn--sm') {
       const me = Store.me();
 
@@ -994,9 +965,8 @@
 
       return `
         <button
-          class="btn ${cls} ${
-            on ? 'btn--ghost' : 'btn--primary'
-          }"
+          class="btn ${cls} ${on ? 'btn--ghost' : 'btn--primary'
+        }"
           data-follow="${u.id}"
           aria-pressed="${on}"
         >
@@ -1031,7 +1001,6 @@
       `;
     },
 
-    /** Compact Suggested for you list. */
     suggestedHtml(limit = 4) {
       const me = Store.me();
 
@@ -1058,7 +1027,6 @@
 
   const Engine = {
     tick() {
-      // No simulated activity.
       return;
     },
 
@@ -1067,7 +1035,6 @@
     },
 
     run() {
-      // No fake likes, comments, follow-backs or replies.
       return;
     }
   };
@@ -1138,7 +1105,6 @@
      Global delegated handlers
      ====================================================================== */
 
-  // Broken images → sensible fallbacks.
   document.addEventListener('error', (e) => {
     const t = e.target;
 
@@ -1198,7 +1164,6 @@
       return;
     }
 
-    // MongoDB ObjectId validation.
     if (!/^[a-f\d]{24}$/i.test(uid)) {
       UI.toast(
         'This account is not available in MongoDB yet.',
@@ -1231,7 +1196,6 @@
         );
       }
 
-      // Update logged-in user's local following list.
       if (!Array.isArray(me.following)) {
         me.following = [];
       }
@@ -1250,7 +1214,6 @@
 
       Utils.emit('follow');
 
-      // Update all Follow buttons for this user.
       Utils.qsa(`[data-follow="${uid}"]`).forEach(x => {
         const match = x.className.match(/btn--(sm|lg)/);
         const cls = match ? `btn--${match[1]}` : '';
@@ -1340,15 +1303,26 @@
     const page = body.dataset.page;
     const isProtected = body.hasAttribute('data-protected');
     const me = Store.me();
+    // Redirect visitors to login when opening a protected page
+    if (isProtected && !me) {
+      location.replace('login.html?next=index.html');
+      return;
+    }
+    // IMPORTANT: Redirect logged-out visitors to login.
+    if (isProtected && !me) {
+      location.replace('login.html');
+      return;
+    }
 
-    // Protected pages need a valid local session.
+    // Render navigation for logged-in users.
     if (isProtected && me) {
       SANS.Nav && SANS.Nav.render();
     }
 
     // Auth pages bounce signed-in users.
     if (!isProtected && me && !Utils.param('force')) {
-      return location.replace('index.html');
+      location.replace('index.html');
+      return;
     }
 
     // Simulated Engine activity is disabled.
