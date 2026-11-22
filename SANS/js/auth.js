@@ -353,16 +353,6 @@
           showErr('');
         });
       });
-
-      const demoButton = Utils.qs('#demoLogin');
-
-      if (demoButton) {
-        demoButton.addEventListener('click', () => {
-          showErr(
-            'Demo login is unavailable. Please register or use your account.'
-          );
-        });
-      }
     }
   };
 
